@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cuckoo Catcher</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 { font-size: 2em; margin-bottom: 10px; }
+    #score, #timer { font-size: 1.2em; margin: 10px; }
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .clock {
+      width: 100px;
+      height: 100px;
+      position: relative;
+    }
+    .clock img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      background: black;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>🐦 Cuckoo Catcher</h1>
+  <p id="timer">Time left: 40</p>
+  <p id="score">Score: 0</p>
+  <p id="high-score">High Score: 0</p>
+  <div id="game-board"></div>
+  <p id="message"></p>
+  <button onclick="startGame()">Play Again</button>
+
+  <script>
+    const board = document.getElementById("game-board");
+    const timerDisplay = document.getElementById("timer");
+    const scoreDisplay = document.getElementById("score");
+    const highScoreDisplay = document.getElementById("high-score");
+    const message = document.getElementById("message");
+
+    const cuckooOn = "https://cdn.shopify.com/s/files/1/0948/8374/2034/files/cuckoo-yes.png?v=1751542850";
+    const cuckooOff = "https://cdn.shopify.com/s/files/1/0948/8374/2034/files/cuckoo-no.png?v=1751542850";
+
+    let score = 0;
+    let timeLeft = 40;
+    let highScore = localStorage.getItem("cuckooHighScore") || 0;
+    let gameInterval;
+    let countdownInterval;
+    let gameOver = false;
+
+    function startGame() {
+      board.innerHTML = "";
+      message.innerHTML = "";
+      score = 0;
+      timeLeft = 40;
+      gameOver = false;
+      scoreDisplay.textContent = "Score: 0";
+      highScoreDisplay.textContent = "High Score: " + highScore;
+      timerDisplay.textContent = "Time left: " + timeLeft;
+
+      for (let i = 0; i < 9; i++) {
+        const clock = document.createElement("div");
+        clock.classList.add("clock");
+
+        const cuckoo = document.createElement("img");
+        cuckoo.src = cuckooOff;
+
+        cuckoo.addEventListener("click", () => {
+          if (!gameOver && cuckoo.src.includes("cuckoo-yes")) {
+            score++;
+            scoreDisplay.textContent = "Score: " + score;
+            cuckoo.src = cuckooOff;
+
+            if (score > highScore) {
+              highScore = score;
+              localStorage.setItem("cuckooHighScore", highScore);
+              highScoreDisplay.textContent = "High Score: " + highScore;
+            }
+          }
+        });
+
+        clock.appendChild(cuckoo);
+        board.appendChild(clock);
+      }
+
+      gameInterval = setInterval(showCuckoo, 800);
+      countdownInterval = setInterval(updateTimer, 1000);
+    }
+
+    function showCuckoo() {
+      if (gameOver) return;
+
+      const cuckoos = document.querySelectorAll(".clock img");
+      cuckoos.forEach(c => c.src = cuckooOff);
+
+      const index = Math.floor(Math.random() * cuckoos.length);
+      const selected = cuckoos[index];
+      selected.src = cuckooOn;
+
+      setTimeout(() => {
+        if (!gameOver && selected.src.includes("cuckoo-yes")) {
+          selected.src = cuckooOff;
+        }
+      }, 600);
+    }
+
+    function updateTimer() {
+      timeLeft--;
+      timerDisplay.textContent = "Time left: " + timeLeft;
+      if (timeLeft <= 0) {
+        clearInterval(gameInterval);
+        clearInterval(countdownInterval);
+        gameOver = true;
+
+        // Reset cuckoo images on end
+        document.querySelectorAll(".clock img").forEach(c => c.src = cuckooOff);
+
+        if (score >= 35) {
+          message.innerHTML = "🎉 Incredible! Use code <strong>CUCKOO10</strong> for 10% off.";
+        } else if (score >= 25) {
+          message.innerHTML = "🎉 Great effort! Use code <strong>CUCKOO5</strong> for 5% off.";
+        } else {
+          message.innerHTML = "You scored under 25. Try again to unlock a reward!";
+        }
+      }
+    }
+
+    window.onload = () => {
+      highScoreDisplay.textContent = "High Score: " + highScore;
+      startGame();
+    };
+  </script>
+</body>
+</html>
