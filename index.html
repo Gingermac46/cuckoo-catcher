@@ -50,7 +50,7 @@
   </style>
 </head>
 <body>
-  <h1>🐦 Cuckoo Catcher</h1>
+ <!-- <h1>Cuckoo Catcher</h1> -->
   <p id="timer">Time left: 40</p>
   <p id="score">Score: 0</p>
   <p id="high-score">High Score: 0</p>
@@ -143,9 +143,9 @@
         document.querySelectorAll(".clock img").forEach(c => c.src = cuckooOff);
 
         if (score >= 35) {
-          message.innerHTML = "🎉 Incredible! Use code <strong>CUCKOO10</strong> for 10% off.";
+          message.innerHTML = "Incredible! Use code <strong>CUCKOO10</strong> for 10% off.";
         } else if (score >= 25) {
-          message.innerHTML = "🎉 Great effort! Use code <strong>CUCKOO5</strong> for 5% off.";
+          message.innerHTML = "Great effort! Use code <strong>CUCKOO5</strong> for 5% off.";
         } else {
           message.innerHTML = "You scored under 25. Try again to unlock a reward!";
         }
