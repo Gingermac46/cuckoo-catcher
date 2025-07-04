@@ -6,45 +6,72 @@
   <title>Cuckoo Catcher</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
+      font-family: "Futura", "Helvetica Neue", sans-serif;
+      background-color: #f4f4f4;
       text-align: center;
       padding: 20px;
+      color: #333;
     }
+
     h1 { font-size: 2em; margin-bottom: 10px; }
-    #score, #timer { font-size: 1.2em; margin: 10px; }
+
+    #score, #timer, #high-score {
+      font-size: 1.2em;
+      margin: 10px;
+    }
+
     #game-board {
       display: grid;
-      grid-template-columns: repeat(3, 100px);
-      gap: 15px;
+      grid-template-columns: repeat(3, minmax(100px, 1fr));
+      gap: 20px;
       justify-content: center;
-      margin-top: 20px;
+      margin-top: 30px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
     }
+
     .clock {
-      width: 100px;
-      height: 100px;
+      width: 100%;
+      max-width: 140px;
+      aspect-ratio: 1;
       position: relative;
     }
+
     .clock img {
       width: 100%;
-      height: auto;
-      border-radius: 10px;
+      height: 100%;
+      border-radius: 12px;
       cursor: pointer;
+      
+      transition: transform 0.2s ease;
     }
+
+    .clock img:hover {
+      transform: scale(1.05);
+    }
+
     button {
-      margin-top: 20px;
-      padding: 10px 20px;
+      margin-top: 30px;
+      padding: 12px 28px;
       font-size: 1em;
+      font-family: "Futura", "Helvetica Neue", sans-serif;
       border: none;
-      background: black;
+      background: #000;
       color: white;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
+      transition: background 0.2s ease;
     }
+
+    button:hover {
+      background: #333;
+    }
+
     #message {
-      margin-top: 20px;
+      margin-top: 30px;
       font-size: 1.2em;
-      color: #333;
+      color: #111;
     }
   </style>
 </head>
@@ -74,15 +101,8 @@
     let gameOver = false;
 
     function startGame() {
-      // Clear any running intervals
-      if (gameInterval) {
-        clearInterval(gameInterval);
-        gameInterval = null;
-      }
-      if (spawnInterval) {
-        clearInterval(spawnInterval);
-        spawnInterval = null;
-      }
+      if (gameInterval) clearInterval(gameInterval);
+      if (spawnInterval) clearInterval(spawnInterval);
 
       board.innerHTML = "";
       message.innerHTML = "";
@@ -147,7 +167,6 @@
         clearInterval(spawnInterval);
         gameOver = true;
 
-        // Reset cuckoo images on end
         document.querySelectorAll(".clock img").forEach(c => c.src = cuckooOff);
 
         if (score >= 35) {
